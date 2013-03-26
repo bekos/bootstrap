@@ -1,0 +1,4 @@
+<div class="btn-group" ng-class="{open: isOpen()}">
+  <a class="btn dropdown-toggle" ng-class='(type && "btn-" + type) + " " + (size && "btn-" + size)' ng-click="toggle($event)">{{heading}} <span class="caret"></span></a>
+  <ul class="dropdown-menu" ng-class='placement && "pull-" + placement' ng-transclude></ul>
+</div>

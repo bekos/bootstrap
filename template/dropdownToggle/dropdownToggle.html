@@ -1,0 +1,4 @@
+<div class="dropdown" ng-class="{open: isOpen()}">
+  <a class="dropdown-toggle" ng-click="toggle($event)">{{heading}}</a>
+  <ul class="dropdown-menu" ng-class='placement && "pull-" + placement' ng-transclude></ul>
+</div>

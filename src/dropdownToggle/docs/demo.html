@@ -1,10 +1,38 @@
-<li class="dropdown" ng-controller="DropdownCtrl">
-  <a class="dropdown-toggle">
-    Click me for a dropdown, yo!
-  </a>
-  <ul class="dropdown-menu">
-    <li ng-repeat="choice in items">
-      <a>{{choice}}</a>
-    </li>
+<div class="well" ng-controller="DropdownCtrl">
+
+  <h4>Simple</h4>
+  <dropdown-toggle heading="Click me for a dropdown!" >
+    <li ng-repeat="choice in items"><a>{{choice}}</a></li>
+  </dropdown-toggle>
+
+  <h4>Within tabs</h4>
+  <ul class="nav nav-pills">
+    <dropdown-list heading="Dropdown" >
+      <li ng-repeat="choice in items"><a>{{choice}}</a></li>
+    </dropdown-list>
+    <dropdown-list heading="Another one" opened="true">
+      <li ng-click="log()"><a>Click to execute...</a></li>
+      <li class="divider"></li>
+      <li><a>This one is opened</a></li>
+      <li><a>from the start</a></li>
+    </dropdown-list>
+    <dropdown-list heading="And a right aligned" placement="right" >
+      <li ng-repeat="choice in items"><a>{{choice}}</a></li>
+    </dropdown-list>
   </ul>
-</li>
+
+  <h4>Buttons</h4>
+  <div class="btn-toolbar" style="margin: 0;">
+    <dropdown-button heading="Button">
+      <li ng-repeat="choice in items"><a>{{choice}}</a></li>
+    </dropdown-button>
+    <dropdown-button heading="Danger" type="warning" size="large">
+      <li ng-repeat="choice in items"><a>{{choice}}</a></li>
+    </dropdown-button>
+    <dropdown-split-button heading="Split button" type="inverse" size="mini">
+      <li><a>I am mini</a></li>
+      <li><a>and inverse</a></li>
+    </dropdown-split-button>
+  </div>
+
+</div>

@@ -4,4 +4,8 @@ function DropdownCtrl($scope) {
     "And another choice for you.",
     "but wait! A third!"
   ];
+
+  $scope.log = function() {
+    console.log('This is executed');
+  };
 }
