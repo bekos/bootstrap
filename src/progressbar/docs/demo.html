@@ -1,27 +1,23 @@
 <div ng-controller="ProgressDemoCtrl" class="well">
-    <h2>Static</h2>
+
+    <h3>Static</h3>
     <div class="row-fluid">
-        <div class="span4"><progress percent="55"></progress></div>
-        <div class="span4"><progress percent="22" class="progress-warning progress-striped"></progress></div>
-        <div class="span4"><progress percent="88" class="progress-danger progress-striped active"></div>
+        <div class="span4"><progress><bar value="55"></bar></progress></div>
+        <div class="span4"><progress class="progress-striped progress-warning"><bar value="22">22%</bar></progress></div>
+        <div class="span4"><progress class="progress-striped progress-danger active" max="200"><bar value="166"><i>166 / 200</i></bar></progress></div>
     </div>
-    
-    <h2>Dynamic <button class="btn btn-primary" type="button" ng-click="random()">Randomize</button></h2>
-    <pre>Value: {{dynamic}}</pre>
-    <progress percent="dynamic"></progress>
+
+    <h3>Dynamic <button class="btn btn-small btn-primary" type="button" ng-click="random()">Randomize</button></h3>
+    <progress max="max"><bar value="dynamic"><span style="color:black; white-space:nowrap;">{{dynamic}} / {{max}}</span></bar></progress>
     
     <small><em>No animation</em></small>
-    <progress percent="dynamic" class="progress-success" animate="false"></progress>
+    <progress class="progress-success" animate="false"><bar value="dynamic"><b>{{dynamic}}%</b></bar></progress>
 
     <small><em>Object (changes type based on value)</em></small>
-    <progress percent="dynamicObject" class="progress-striped active"></progress>
+    <progress class="progress-striped active"><bar value="dynamic" type="type">{{type}} <i ng-show="showWarning">!!! Watch out !!!</i></bar></progress>
     
-    <h2>Stacked <button class="btn btn-primary" type="button" ng-click="randomStacked()">Randomize</button></h2>
-    <small><em>Array values with automatic types</em></small>
-    <pre>Value: {{stackedArray}}</pre>
-    <progress percent="stackedArray" auto-type="true"></progress>
-    
-    <small><em>Objects</em></small>
-    <pre>Value: {{stacked}}</pre>
-    <progress percent="stacked"></progress>
+
+    <h3>Stacked <button class="btn btn-small btn-primary" type="button" ng-click="randomStacked()">Randomize</button></h3>
+    <progress><bar ng-repeat="a in stacked" value="a.value" type="a.type"><span ng-hide="a.value < 5">{{a.value}}%</span></bar></progress>
+
 </div>
