@@ -1,47 +1,83 @@
 angular.module('ui.bootstrap.accordion', ['ui.bootstrap.collapse'])
 
 .constant('accordionConfig', {
-  closeOthers: true
+  closeOthers: true,
+  isOpen: false,
+  disabled: false
 })
 
-.controller('AccordionController', ['$scope', '$attrs', 'accordionConfig', function ($scope, $attrs, accordionConfig) {
+.controller('AccordionController', ['$scope', '$attrs', '$parse', 'accordionConfig', function ($scope, $attrs, $parse, accordionConfig) {
+  var self = this;
 
   // This array keeps track of the accordion groups
   this.groups = [];
 
-  // Keep reference to user's scope to properly assign `is-open`
-  this.scope = $scope;
-
-  // Ensure that all the groups in this accordion are closed, unless close-others explicitly says not to
+  // Ensure that all the other groups in this accordion are closed, unless close-others explicitly says not to
   this.closeOthers = function(openGroup) {
     var closeOthers = angular.isDefined($attrs.closeOthers) ? $scope.$eval($attrs.closeOthers) : accordionConfig.closeOthers;
     if ( closeOthers ) {
       angular.forEach(this.groups, function (group) {
         if ( group !== openGroup ) {
-          group.isOpen = false;
+          self.toggleGroup(group, false);
         }
       });
     }
   };
-  
-  // This is called from the accordion-group directive to add itself to the accordion
-  this.addGroup = function(groupScope) {
-    var that = this;
-    this.groups.push(groupScope);
 
-    groupScope.$on('$destroy', function (event) {
-      that.removeGroup(groupScope);
+  // This is called from the accordion-group directive to add itself to the accordion
+  this.addGroup = function(group, isOpenAttribute, isDisabledAttribute) {
+    var unregisterIsOpenWatch = angular.noop, unregisterDisabledWatch = angular.noop;
+    this.groups.push(group);
+
+    group.isOpen = accordionConfig.isOpen;
+    if ( isOpenAttribute ) {
+      var getIsOpen = $parse(isOpenAttribute);
+      group.setIsOpen = getIsOpen.assign;
+
+      unregisterIsOpenWatch = $scope.$watch(getIsOpen, function(value) {
+        group.isOpen = !!value;
+      });
+    }
+
+    group.disabled = accordionConfig.disabled;
+    if ( isDisabledAttribute ) {
+      unregisterDisabledWatch = $scope.$watch($parse(isDisabledAttribute), function(value) {
+        group.disabled = !!value;
+      });
+    }
+
+    group.toggle = function(value) {
+      if ( !group.disabled ) {
+        self.toggleGroup(group, value);
+      }
+    };
+
+    group.$on('$destroy', function (event) {
+      self.removeGroup(group);
+      unregisterIsOpenWatch();
+      unregisterDisabledWatch();
     });
+  };
+
+  // This is called from the accordion-group directive to open/close itself
+  this.toggleGroup = function(group, value) {
+    group.isOpen = (angular.isUndefined(value) || value === null) ? !group.isOpen : !!value;
+
+    if ( group.isOpen ) {
+      this.closeOthers(group);
+    }
+    if ( group.setIsOpen ) {
+      group.setIsOpen($scope, group.isOpen);
+    }
   };
 
   // This is called from the accordion-group directive when to remove itself
   this.removeGroup = function(group) {
     var index = this.groups.indexOf(group);
-    if ( index !== -1 ) {
-      this.groups.splice(this.groups.indexOf(group), 1);
+    if ( index > -1 ) {
+      this.groups.splice(index, 1);
     }
   };
-
 }])
 
 // The accordion directive simply sets up the directive controller
@@ -57,46 +93,26 @@ angular.module('ui.bootstrap.accordion', ['ui.bootstrap.collapse'])
 })
 
 // The accordion-group directive indicates a block of html that will expand and collapse in an accordion
-.directive('accordionGroup', ['$parse', '$transition', '$timeout', function($parse, $transition, $timeout) {
+.directive('accordionGroup', function() {
   return {
     require:'^accordion',         // We need this directive to be inside an accordion
     restrict:'EA',
     transclude:true,              // It transcludes the contents of the directive into the template
     replace: true,                // The element containing the directive will be replaced with the template
     templateUrl:'template/accordion/accordion-group.html',
-    scope:{ heading:'@' },        // Create an isolated scope and interpolate the heading attribute onto this scope
-    controller: ['$scope', function($scope) {
+    scope:{                       // Create an isolated scope
+      heading: '@'                // and interpolate the heading attribute onto this scope
+    },
+    controller: function() {
       this.setHeading = function(element) {
         this.heading = element;
       };
-    }],
+    },
     link: function(scope, element, attrs, accordionCtrl) {
-      var getIsOpen, setIsOpen;
-
-      accordionCtrl.addGroup(scope);
-
-      scope.isOpen = false;
-      
-      if ( attrs.isOpen ) {
-        getIsOpen = $parse(attrs.isOpen);
-        setIsOpen = getIsOpen.assign;
-
-        accordionCtrl.scope.$watch(getIsOpen, function(value) {
-          scope.isOpen = !!value;
-        });
-      }
-
-      scope.$watch('isOpen', function(value) {
-        if ( value ) {
-          accordionCtrl.closeOthers(scope);
-        }
-        if ( setIsOpen ) {
-          setIsOpen(accordionCtrl.scope, value);
-        }
-      });
+      accordionCtrl.addGroup(scope, attrs.isOpen, attrs.disabled);
     }
   };
-}])
+})
 
 // Use accordion-heading below an accordion-group to provide a heading containing HTML
 // <accordion-group>

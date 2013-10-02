@@ -16,6 +16,9 @@
         <button class="btn btn-small" ng-click="addItem()">Add Item</button>
         <div ng-repeat="item in items">{{item}}</div>
     </accordion-group>
+    <accordion-group heading="Disabled header" disabled="true">
+      You will never see me :-)
+    </accordion-group>
     <accordion-group is-open="isopen">
         <accordion-heading>
             I can have markup, too! <i class="pull-right" ng-class="{'icon-chevron-down': isopen, 'icon-chevron-right': !isopen}"></i>
