@@ -96,6 +96,28 @@ describe('tabs', function() {
       titles().eq(1).find('a').click();
       expect(scope.deselectFirst).toHaveBeenCalled();
     });
+
+    it('should have aria markup for titles', function() {
+      var t = titles().find('a');
+
+      expect(t.eq(0).attr('tabindex')).toBe('0');
+      expect(t.eq(0).attr('aria-expanded')).toBe('true');
+      expect(t.eq(0).attr('aria-selected')).toBe('true');
+
+      expect(t.eq(1).attr('tabindex')).toBe('-1');
+      expect(t.eq(1).attr('aria-expanded')).toBe('false');
+      expect(t.eq(1).attr('aria-selected')).toBe('false');
+    });
+
+    it('should have aria markup for panes', function() {
+      var t = contents();
+
+      expect(t.eq(0).attr('tabindex')).toBe('0');
+      expect(t.eq(0).attr('aria-hidden')).toBe('false');
+
+      expect(t.eq(1).attr('tabindex')).toBe('-1');
+      expect(t.eq(1).attr('aria-hidden')).toBe('true');
+    });
   });
 
   describe('basics with initial active tab', function() {
