@@ -1,0 +1,38 @@
+<script type="text/ng-template" id="selectCustomTemplate.html">
+  <span>
+      <i class="glyphicon glyphicon-{{option.icon}}"></i>
+      <span bind-html-unsafe="option.name"></span>
+  </span>
+</script>
+
+<div ng-controller="SelectDemoCtrl" role="application">
+  <h4>Single select with grouping</h4>
+  <dropdown-select ng-model="singleSelected" ng-options="icon.id as icon.name group by icon.type for icon in icons | orderBy:'name'"
+        type="danger" ng-disabled="disabled"></dropdown-select>
+
+  <h4>Custom template</h4>
+  <dropdown-select style="width:200px" ng-model="singleSelected" ng-options="icon.id as icon for icon in icons | orderBy:'name'"
+        type="primary" option-template-url="selectCustomTemplate.html" empty-placeholder-text="Please select..." filter="true" filter-key="name"></dropdown-select>
+
+  <pre style="margin-top:10px;">Value: {{singleSelected}}</pre>
+
+  <p>
+    <button class="btn btn-sm btn-info" ng-click="singleSelected = 5">Set to Phone</button>
+    <button class="btn btn-sm" ng-click="disabled = !disabled">Disable/Enable</button>
+    <button class="btn btn-sm btn-warning" ng-click="singleSelected = null">Clear</button>
+  </p>
+
+  <hr />
+
+  <h4>Multiple select</h4>
+  <p>
+    <dropdown-select style="width:400px" ng-model="multipleSelected" ng-options="icon.id as icon.name for icon in icons | orderBy:'type'" multiple="true" size="lg" filter="true"></dropdown-select>
+  </p>
+
+  <pre>Values: {{multipleSelected}}</pre>
+
+  <p>
+    <button class="btn btn-sm btn-info" ng-click="multipleSelected = [3, 1]">Set to [3, 1]</button>
+    <button class="btn btn-sm btn-warning" ng-click="multipleSelected = null">Clear</button>
+  </p>
+</div>

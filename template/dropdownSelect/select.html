@@ -1,0 +1,18 @@
+<div class="btn-group dropdown" ng-keydown="onKeydown($event)" is-open="isopen" on-toggle="onToggle()" role="combobox" aria-activedescendant="{{activeOption.id}}">
+    <button type="button" class="btn dropdown-toggle" ng-class="['btn-' + (type || 'default'), size && ('btn-' + size)]" ng-disabled="isDisabled" style="width:100%;">
+        <span placeholder-empty ng-if="isEmpty()" empty-placeholder-text="{{emptyPlaceholderText}}"></span>
+        <span ng-if="!isEmpty() && !multiple" select-option="selectedOption.label" template-url="optionTemplateUrl"></span>
+        <span ng-if="!isEmpty() && multiple" ng-repeat="option in selectedOption track by $index"><span select-option="option.label" template-url="optionTemplateUrl"></span><span ng-if="!$last">, </span></span>
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" style="width:100%;" ng-click="prevent($event)" role="listbox" ng-if="isopen">
+        <li ng-if="filter.enabled"><input type="search" style="width: 100%" ng-model="filter.value" ng-change="filterChange()" aria-readonly="true" aria-activedescendant="{{activeOption.id}}"></li>
+        <li ng-repeat-start="(groupName, group) in groups track by $index" class="dropdown-header" ng-if="groupName">{{groupName}}</li>
+        <li ng-repeat="option in group.options track by $index" ng-class="{active: isActive(option)}" role="option" ng-click="select(option, $event)" ng-if="option.valid" id="{{option.id}}" aria-selected="{{!!option.selected}}">
+            <a href tabindex="-1" select-option="option.label" template-url="optionTemplateUrl">
+                <i ng-if="multiple && option.selected" class="glyphicon glyphicon-ok pull-right"></i>
+            </a>
+        </li>
+        <li class="divider" ng-if="!$last" ng-repeat-end></li>
+    </ul>
+</div>
